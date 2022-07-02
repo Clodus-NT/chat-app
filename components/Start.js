@@ -83,7 +83,7 @@ export default class Start extends React.Component {
             <Pressable 
               style={styles.enterBtn} 
               onPress={() => {
-                this.props.navigation.navigate('Chat', { name: this.state.name })
+                this.props.navigation.navigate('Chat', { name: this.state.name, bgColor: this.state.bgColor })
               }}
             >
               <Text style={styles.enterBtnText}>Start Chatting</Text>
