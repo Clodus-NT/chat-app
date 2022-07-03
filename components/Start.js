@@ -32,7 +32,7 @@ export default class Start extends React.Component {
   };
 
   colors = {
-    black: "#090C08",
+    black: "#1F2525",
     purple: "#474056",
     grey: "#8A95A5",
     green: "#B9C6AE",
@@ -57,6 +57,9 @@ export default class Start extends React.Component {
               onChangeText={(name) => this.setState({ name })}
               value={this.state.name}
               placeholder="What's your name?"
+              accessible={true}
+              accessibilityLabel="your name"
+              accessibilityHint="Type the name you want to use in the chat session."
             />
 
             <Text style={styles.chooseColorText}>Choose Background Color:</Text>
@@ -65,18 +68,30 @@ export default class Start extends React.Component {
               <TouchableOpacity
                 style={styles.color1}
                 onPress={() => this.changeBgColor(this.colors.black)}
+                accessible={true}
+                accessibilityLabel="dark slate gray"
+                accessibilityHint="Selecting dark slate gray will use this color as your background in the chat room."
               ></TouchableOpacity>
               <TouchableOpacity
                 style={styles.color2}
                 onPress={() => this.changeBgColor(this.colors.purple)}
+                accessible={true}
+                accessibilityLabel="dark purple with a slate gray tone"
+                accessibilityHint="Selecting dark purple with a slate gray tone will use this color as your background in the chat room."
               ></TouchableOpacity>
               <TouchableOpacity
                 style={styles.color3}
                 onPress={() => this.changeBgColor(this.colors.grey)}
+                accessible={true}
+                accessibilityLabel="soft slate blue"
+                accessibilityHint="Selecting dark blue gray will use this color as your background in the chat room."
               ></TouchableOpacity>
               <TouchableOpacity
                 style={styles.color4}
                 onPress={() => this.changeBgColor(this.colors.green)}
+                accessible={true}
+                accessibilityLabel="soft and light slate green"
+                accessibilityHint="Selecting soft and light slate green will use this color as your background in the chat room."
               ></TouchableOpacity>
             </View>
 
@@ -150,7 +165,7 @@ const styles = StyleSheet.create({
   },
 
   color1: {
-    backgroundColor: '#090C08',
+    backgroundColor: '#1F2525',
     width: 40,
     height: 40,
     borderRadius: 20,
