@@ -8,6 +8,8 @@ import {
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import MapView from 'react-native-maps';
+import CustomActions from './CustomActions';
     
 //Firebase Import
 const firebase = require('firebase');
@@ -28,6 +30,8 @@ export default class Chat extends React.Component {
         avatar: '',
       },
       isConnected: false,
+      image: null,
+      location: null,
     };
 
     //Firestore SDK
@@ -199,14 +203,13 @@ export default class Chat extends React.Component {
       )
     }
   }
+
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />
+  }
   
   render() {
-    // // Takes the state of 'name' that was passed as a prop to <Chat /> and uses the prop sets it to the title of the screen
-    // let name = this.props.route.params.name;
-    // this.props.navigation.setOptions({ title: name });
-    
-    //Similar to 'name' above, the state of the chosen bgColor 
-    //was passed as a prop from <Start /> to <Chat />
+
     let { bgColor } = this.props.route.params;
 
     return (
@@ -215,6 +218,7 @@ export default class Chat extends React.Component {
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
           renderInputToolbar={this.renderInputToolbar.bind(this)}
+          renderActions={this.renderCustomActions}
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{ 
