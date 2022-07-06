@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import MapView from 'react-native-maps';
 import * as firebase from "firebase";
 import "firebase/firestore";
 
-export default class CustomActions extends React.Component {
+export default function CustomActions(props) {
+  const { showActionSheetWithOptions } = useActionSheet();
 
-  pickImage = async () => {
+  const pickImage = async () => {
     //Ask for permission to access media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     try {
@@ -20,8 +22,8 @@ export default class CustomActions extends React.Component {
         }).catch((error) => console.log(error));
         //If user selects an image, send it
         if (!result.cancelled) {
-          const imageUrl = await this.uploadImage(result.uri);
-          this.props.onSend({ image: imageUrl });
+          const imageUrl = await uploadImage(result.uri);
+          props.onSend({ image: imageUrl });
         }
       } 
     } catch (error) {
@@ -29,7 +31,7 @@ export default class CustomActions extends React.Component {
     }
   }
 
-  takePhoto = async () => {
+  const takePhoto = async () => {
     //Ask for permission to camera
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     try {
@@ -40,8 +42,8 @@ export default class CustomActions extends React.Component {
         }).catch((error) => console.log(error));
         //If user selects an image, send it
         if (!result.cancelled) {
-          const imageUrl = await this.uploadImage(result.uri);
-          this.props.onSend({ image: imageUrl });
+          const imageUrl = await uploadImage(result.uri);
+          props.onSend({ image: imageUrl });
         }
       }
     } catch (error) {
@@ -61,7 +63,7 @@ export default class CustomActions extends React.Component {
   //       });
   //       //If location is found/selected, send it
   //       if (result) {
-  //         this.props.onSend({
+  //         props.onSend({
   //           location: {
   //             longitude: result.coords.longitude,
   //             latitude: result.coords.latitude,
@@ -74,7 +76,7 @@ export default class CustomActions extends React.Component {
   //   }
   // }
 
-  onActionPress = () => {
+  const onActionPress = () => {
     const options = [
       "Choose From Library",
       "Take Picture",
@@ -82,7 +84,8 @@ export default class CustomActions extends React.Component {
       "Cancel",
     ];
     const cancelButtonIndex = options.length - 1;
-    this.context.actionSheet().showActionSheetWithOptions(
+
+    showActionSheetWithOptions(
       {
         options,
         cancelButtonIndex,
@@ -91,33 +94,32 @@ export default class CustomActions extends React.Component {
         switch (buttonIndex) {
           case 0:
             console.log("user wants to pick an image");
-            return this.pickImage();
+            return pickImage();
           case 1:
             console.log("user wants to take a photo");
-            return this.takePhoto();
+            return takePhoto();
           // case 2:
           //   console.log("user wants to get their location");
-          //   return this.getLocation();
+          //   return .getLocation();
         }
       }
     );
   };
 
-  render() {
+
     return (
       <TouchableOpacity
         style={[styles.container]}
-        onPress={this.onActionPress}
+        onPress={onActionPress}
         accessible={true}
         accessibilityLabel="More media options"
         accessibilityHint="Choose an image from your camera roll, take a picture to send, or your share your location."
       >
-        <View style={[styles.wrapper, this.props.wrapperStyle]}>
-            <Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
+        <View style={[styles.wrapper, props.wrapperStyle]}>
+            <Text style={[styles.iconText, props.iconTextStyle]}>+</Text>
         </View>
       </TouchableOpacity>
     )
-  }
 }
 
 CustomActions.contextTypes = {
