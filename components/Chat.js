@@ -63,20 +63,6 @@ export default class Chat extends React.Component {
       .firestore()
       .collection("messages");
 
-    // //Authenticate user
-    // this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
-    //   if (!user) {
-    //     firebase.auth().signInAnonymously();
-    //   }
-    //   this.setState({
-    //     uid: user.uid,
-    //     messages: [],
-    //   });
-    //   this.unsubscribe = this.referenceChatMessages
-    //     .orderBy("createdAt", "desc")
-    //     .onSnapshot(this.onCollectionUpdate);
-    // });       
-
     //Check if user is online
     NetInfo.fetch().then(connection => {
       if (connection.isConnected) {
@@ -90,7 +76,7 @@ export default class Chat extends React.Component {
         }
         this.setState({
           uid: user.uid,
-         messages: [],
+          messages: [],
         });
         this.unsubscribe = this.referenceChatMessages
           .orderBy("createdAt", "desc")
@@ -121,6 +107,8 @@ export default class Chat extends React.Component {
         text: data.text,
         createdAt: data.createdAt.toDate(),
         user: data.user,
+        image: data.image || null,
+        location: data.location || null,
       });
     });
     this.setState({
@@ -130,13 +118,16 @@ export default class Chat extends React.Component {
 
   addMessage() {
     const message = this.state.messages[0];
+
     this.referenceChatMessages.add({
       uid: this.state.uid,
       _id: message._id,
-      text: message.text,
+      text: message.text || '',
       createdAt: message.createdAt,
       user: this.state.user,
-    })
+      image: message.image || null,
+      location: message.location || null,
+    });
   }
 
   //Save to to async storage
@@ -160,17 +151,6 @@ export default class Chat extends React.Component {
       console.log(error.message);
     }
   };
-
-  // async deleteMessage() {
-  //   try {
-  //     await AsyncStorage.removeItem('messages');
-  //     this.setState({
-  //       messages: []
-  //     })
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }
 
   onSend(messages = []) {
     this.setState(previousState => ({
@@ -207,6 +187,29 @@ export default class Chat extends React.Component {
   renderCustomActions = (props) => {
     return <CustomActions {...props} />
   }
+
+  renderCustomView(props) {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+        return (
+            <MapView
+                style={{
+                    width: 150,
+                    height: 100,
+                    borderRadius: 13,
+                    margin: 3
+                }}
+                region={{
+                    latitude: currentMessage.location.latitude,
+                    longitude: currentMessage.location.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+            />
+        );
+    }
+    return null;
+  }
   
   render() {
 
@@ -219,6 +222,8 @@ export default class Chat extends React.Component {
           renderBubble={this.renderBubble.bind(this)}
           renderInputToolbar={this.renderInputToolbar.bind(this)}
           renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
+          renderUsernameOnMessage={true}
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
           user={{ 
