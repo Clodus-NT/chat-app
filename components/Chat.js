@@ -51,6 +51,8 @@ export default class Chat extends React.Component {
 
     //Stores and retrieves chat messages
     this.referenceChatMessages = firebase.firestore().collection("messages");
+
+    this.refMsgsUser = null;
   }
 
   componentDidMount() {
@@ -77,7 +79,18 @@ export default class Chat extends React.Component {
         this.setState({
           uid: user.uid,
           messages: [],
+          user: {
+            _id: user.uid,
+            name: name,
+        },
         });
+
+        this.refMsgsUser = firebase
+        .firestore()
+        .collection('messages')
+        .where('uid', '==', this.state.uid);
+    
+
         this.unsubscribe = this.referenceChatMessages
           .orderBy("createdAt", "desc")
           .onSnapshot(this.onCollectionUpdate);
